@@ -1,0 +1,1 @@
+# EmojiCoin_AutoTrader
