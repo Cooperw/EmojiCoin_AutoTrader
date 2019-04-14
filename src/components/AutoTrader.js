@@ -34,9 +34,9 @@ export default class Register extends Component {
 
 		while(true){
 
+			//Import account
 			this.state.metaAccount = web3.eth.accounts.privateKeyToAccount(this.props.account.privateKey);
 			this.state.fromAddress = this.state.metaAccount.address.toLowerCase();
-
 
 			//Locate my assets
 			let coins_o = [];
@@ -51,16 +51,17 @@ export default class Register extends Component {
 				}
 			}
 
-
+			//Get emojicoin balance from contract
 			let TotalBalS = await emojiCoin.methods.balanceOf(this.state.metaAccount.address).call({
 				from: this.state.metaAccount.address
 			});
 
+			//Convert to dollars
 			TotalBalS = TotalBalS/1000000000000000000;
 
-			let TotalBal = 0;
 
-			//Sort highest
+			//Find most valuable token
+			let TotalBal = 0;
 			let hhIghIndex = 0;
 			let hhIghPrice = 0;
 
@@ -76,26 +77,15 @@ export default class Register extends Component {
 
 			}
 
+			//Convert to dollars
 			TotalBal = TotalBal * 0.00002005614341339569;
 
+			//Log assets to console
 			TotalBalS = Number(TotalBalS)+ Number(TotalBal);
 			console.log("Total Assets: $"+TotalBalS);
 			let coins = coins_o;
 
-			//Find lowest coin
-			let minIndex = 0;
-			let minPrice = 99999999999999999999;
-			for(let i = 0; i < 8; i++){
-
-				let Price = await emojiCoin.methods.getEmojiPrice(""+i).call({
-					from: this.state.metaAccount.address
-				});
-				if(Price < minPrice){
-					minPrice = Price;
-					minIndex = i;
-				}
-			}
-
+			//Sell most valuable token
 			for (let x = 0; x < coins.length; x++){
 				let coin = coins[x];
 				let Price = await emojiCoin.methods.getEmojiPrice(coin).call({
@@ -116,11 +106,26 @@ export default class Register extends Component {
 				}
 			}
 
+			//Find lowest coin
+			let minIndex = 0;
+			let minPrice = 99999999999999999999;
+			for(let i = 0; i < 8; i++){
 
+				let Price = await emojiCoin.methods.getEmojiPrice(""+i).call({
+					from: this.state.metaAccount.address
+				});
+				if(Price < minPrice){
+					minPrice = Price;
+					minIndex = i;
+				}
+			}
+
+			//Get updated liquid balance
 			let myBalance = await emojiCoin.methods.balanceOf(this.state.metaAccount.address).call({
 				from: this.state.metaAccount.address
 			});
 
+			//Buy as much as you can of the cheapest token
 			while(Number(myBalance) > 1500000000000000000){
 
 				let tx={
@@ -134,6 +139,7 @@ export default class Register extends Component {
 					web3.eth.sendSignedTransaction(signed.rawTransaction).on('receipt')
 				});
 
+				//Update balance and cheapest token
 				myBalance = await emojiCoin.methods.balanceOf(this.state.metaAccount.address).call({
 					from: this.state.metaAccount.address
 				});

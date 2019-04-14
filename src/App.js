@@ -1,10 +1,13 @@
 import React, { Component } from "react";
 import web3 from "./web3";
 import { Container, Card } from "semantic-ui-react";
-import Register from "./components/Register";
+import AutoTrader from "./components/AutoTrader";
 import CashOut from "./components/CashOut";
 
 class App extends Component {
+
+	//Place as many accounts as you would like to do simultanious trading. Private key is a hard requirement, address is just used for displaying which account is being used on a page.
+
 	state = {
 		value: "",
 		message: "",
@@ -28,26 +31,28 @@ class App extends Component {
 		]
 	};
 
+	//Bind our methods
 	constructor(props){
 		super(props);
-		this.buildCards = this.buildCards.bind(this);
+		this.buildAutoTraderCards = this.buildAutoTraderCards.bind(this);
 		this.buildCashOut = this.buildCashOut.bind(this);
 
 	}
 
-
+	//Build our page
 	render() {
 		return (
 			<Container>
 				<div>
 					{this.buildCards()}
-					{this.buildCashOut()}
+					{this.buildAutoTraderCards()}
 				</div>
 			</Container>
 		);
 	}
 
-	buildCards(){
+	//Set up auto trader cards
+	buildAutoTraderCards(){
 		return (
 			  <Card.Group>
 			{this.state.accounts.map((account, index) => (
@@ -56,7 +61,7 @@ class App extends Component {
 				<h4>
 				       {account.address}
 				</h4>
-				<Register
+				<AutoTrader
 				        account={account}
 				        exchangeAddress="0x20011d3F4D0EBa0F9b647fc68DF7CCBdFf291587"
 				/>
@@ -66,6 +71,8 @@ class App extends Component {
 			  </Card.Group>
 		);
 	}
+
+	//Set up auto cash-out cards
 	buildCashOut(){
 		return (
 			  <Card.Group>
